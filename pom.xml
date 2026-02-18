@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>print</artifactId>
+    <artifactId>pdf-creation-thymeleaf</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>print</name>
     <description>PDF generation pipeline for template-based document rendering</description>

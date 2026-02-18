@@ -44,11 +44,11 @@ Plans:
   3. Both templates have print-ready CSS with A4 page size, proper margins, and `@page` rules
   4. Conditional content blocks show or hide sections based on data values
   5. Two .docx source files exist as artifacts representing the customer-provided originals
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — Template A: 2-page letter with QR code, conditional content, running headers/footers, .docx artifact
+- [ ] 02-02-PLAN.md — Template B: 1-page 2-column product info sheet with table layout, .docx artifact
 
 ### Phase 3: Test Suite
 **Goal**: JUnit tests that exercise the full pipeline for both templates, produce viewable PDF files, and verify content correctness
@@ -72,5 +72,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + Pipeline | 2/2 | Complete | 2026-02-18 |
-| 2. Demo Templates | 0/TBD | Not started | - |
+| 2. Demo Templates | 0/2 | Not started | - |
 | 3. Test Suite | 0/TBD | Not started | - |

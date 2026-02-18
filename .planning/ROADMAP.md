@@ -59,18 +59,18 @@ Plans:
   2. Generated PDFs are viewable in a standard PDF reader with correct layout and styling
   3. PDF content assertions confirm expected text (names, addresses) exists in both generated PDFs
   4. QR code in Template A PDF is rendered at 300+ pixels and is scannable
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — Template A and B integration tests with PDF content assertions and QR code scan verification
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3
+Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + Pipeline | 2/2 | Complete | 2026-02-18 |
 | 2. Demo Templates | 2/2 | Complete | 2026-02-18 |
-| 3. Test Suite | 0/TBD | Not started | - |
+| 3. Test Suite | 0/1 | Not started | - |

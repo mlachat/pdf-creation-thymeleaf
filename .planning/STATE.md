@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-18)
 ## Current Position
 
 Phase: 2 of 3 (Demo Templates)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-18 — Completed 02-01-PLAN.md
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-18 — Completed 02-02-PLAN.md
 
-Progress: [███████░░░] 75%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: 2.3min
-- Total execution time: 0.12 hours
+- Total execution time: 0.15 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-pipeline | 2/2 | 5min | 2.5min |
-| 02-demo-templates | 1/2 | 2min | 2min |
+| 02-demo-templates | 2/2 | 4min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2min), 01-02 (3min), 02-01 (2min)
+- Last 5 plans: 01-01 (2min), 01-02 (3min), 02-01 (2min), 02-02 (2min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -51,6 +51,7 @@ Recent decisions affecting current work:
 - Standalone ThymeleafRenderer wrapping SpringTemplateEngine (no Spring Boot auto-config needed)
 - @page margin boxes for running headers/footers (may need fallback if OpenHTMLtoPDF doesn't render them)
 - Raw Open XML ZIP for .docx artifacts (no Apache POI dependency needed)
+- Table-based 2-column layout using HTML table with border-left gutter (CSS 2.1 paged media compatible)
 
 ### Pending Todos
 
@@ -58,12 +59,11 @@ None.
 
 ### Blockers/Concerns
 
-- CSS `column-count` in paged media has MEDIUM confidence -- may need table-based fallback for Template B
 - CSS `@page` margin boxes with `running()` elements have MEDIUM confidence -- running headers/footers may need iteration
 - @page margin boxes not yet runtime-verified with OpenHTMLtoPDF -- Template A header/footer may need CSS fallback
 
 ## Session Continuity
 
-Last session: 2026-02-18T08:57Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-02-18T08:58Z
+Stopped at: Completed 02-02-PLAN.md (Phase 2 complete)
 Resume file: None

@@ -1,0 +1,134 @@
+/* Template B: Product/Service Information Sheet — Print-ready CSS */
+
+/* A4 page setup */
+@page {
+    size: A4;
+    margin: 2cm;
+
+    @bottom-center {
+        content: "Seite " counter(page) " von " counter(pages);
+        font-family: 'DejaVuSans', sans-serif;
+        font-size: 8pt;
+        color: #666666;
+    }
+}
+
+/* Body defaults */
+body {
+    font-family: 'DejaVuSans', sans-serif;
+    font-size: 10pt;
+    line-height: 1.4;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 0;
+}
+
+/* Full-width header section */
+.header {
+    border-bottom: 2pt solid #2a6496;
+    padding-bottom: 0.3cm;
+    margin-bottom: 0.8cm;
+}
+
+.header h1 {
+    font-size: 18pt;
+    color: #2a6496;
+    margin: 0;
+    padding: 0;
+}
+
+.header .subtitle {
+    font-size: 11pt;
+    color: #555555;
+    margin: 0.2cm 0 0 0;
+}
+
+/* 2-column table layout */
+.two-column-layout {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5cm;
+}
+
+.two-column-layout td {
+    width: 48%;
+    vertical-align: top;
+    padding: 0;
+}
+
+.two-column-layout td.column-left {
+    padding-right: 0.6cm;
+}
+
+.two-column-layout td.column-right {
+    padding-left: 0.6cm;
+    border-left: 1pt solid #cccccc;
+}
+
+/* Section headings within columns */
+.section-heading {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #2a6496;
+    border-bottom: 1pt solid #2a6496;
+    padding-bottom: 0.15cm;
+    margin: 0 0 0.4cm 0;
+}
+
+/* Detail rows */
+.detail-row {
+    margin-bottom: 0.3cm;
+}
+
+.detail-label {
+    font-size: 9pt;
+    color: #666666;
+    margin: 0;
+}
+
+.detail-value {
+    font-size: 10pt;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Description text */
+.description {
+    font-size: 10pt;
+    text-align: justify;
+    margin-bottom: 0.4cm;
+}
+
+/* Special offer block */
+.special-offer {
+    border: 1pt solid #2a6496;
+    background-color: #eef5fb;
+    padding: 0.3cm;
+    margin-top: 0.5cm;
+}
+
+.special-offer p {
+    margin: 0;
+    font-size: 10pt;
+    color: #2a6496;
+    font-weight: bold;
+}
+
+/* Full-width footer section */
+.footer {
+    border-top: 1pt solid #cccccc;
+    padding-top: 0.3cm;
+    margin-top: 0.8cm;
+}
+
+.footer .legal-text {
+    font-size: 8pt;
+    color: #666666;
+    margin: 0 0 0.1cm 0;
+}
+
+.footer .registration {
+    font-size: 8pt;
+    color: #999999;
+    margin: 0;
+}

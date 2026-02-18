@@ -1,4 +1,4 @@
-# print — Template-Based PDF Generation
+# pdf-creation-thymeleaf — Template-Based PDF Generation
 
 A Java library that replaces JasperReports with a simpler pipeline:
 

@@ -1,0 +1,6 @@
+@page { size: A4; margin: 2cm; }
+body { font-family: 'DejaVuSans', sans-serif; font-size: 12pt; }
+h1 { font-size: 18pt; margin-bottom: 1cm; }
+.address-block { margin-bottom: 1cm; }
+.content { margin-bottom: 1cm; }
+.qr-section { margin-top: 1cm; text-align: center; }

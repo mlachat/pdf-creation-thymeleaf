@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation + Pipeline** - Working PDF generation pipeline with Thymeleaf and QR code support
 - [x] **Phase 2: Demo Templates** - Both templates with print-ready CSS, page layouts, and source .docx files
-- [ ] **Phase 3: Test Suite** - JUnit tests producing verified PDFs with content assertions
+- [x] **Phase 3: Test Suite** - JUnit tests producing verified PDFs with content assertions
 
 ## Phase Details
 
@@ -62,7 +62,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 03-01-PLAN.md — Template A and B integration tests with PDF content assertions and QR code scan verification
+- [x] 03-01-PLAN.md — Template A and B integration tests with PDF content assertions and QR code scan verification
 
 ## Progress
 
@@ -73,4 +73,4 @@ Phases execute in numeric order: 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 1. Foundation + Pipeline | 2/2 | Complete | 2026-02-18 |
 | 2. Demo Templates | 2/2 | Complete | 2026-02-18 |
-| 3. Test Suite | 0/1 | Not started | - |
+| 3. Test Suite | 1/1 | Complete | 2026-02-18 |

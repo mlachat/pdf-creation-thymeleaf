@@ -35,10 +35,10 @@
 
 ### Testing
 
-- [ ] **TEST-01**: JUnit test generates PDF from Template A and writes to `target/test-output/template-a.pdf`
-- [ ] **TEST-02**: JUnit test generates PDF from Template B and writes to `target/test-output/template-b.pdf`
-- [ ] **TEST-03**: PDF content assertions verify expected text (names, addresses) exists in generated PDFs
-- [ ] **TEST-04**: QR code in Template A PDF is scannable (generated at 300+ pixels)
+- [x] **TEST-01**: JUnit test generates PDF from Template A and writes to `target/test-output/template-a.pdf`
+- [x] **TEST-02**: JUnit test generates PDF from Template B and writes to `target/test-output/template-b.pdf`
+- [x] **TEST-03**: PDF content assertions verify expected text (names, addresses) exists in generated PDFs
+- [x] **TEST-04**: QR code in Template A PDF is scannable (generated at 300+ pixels)
 
 ## v2 Requirements
 
@@ -83,10 +83,10 @@
 | DEMO-03 | Phase 2 | Complete |
 | DOCX-01 | Phase 2 | Complete |
 | DOCX-02 | Phase 2 | Complete |
-| TEST-01 | Phase 3 | Pending |
-| TEST-02 | Phase 3 | Pending |
-| TEST-03 | Phase 3 | Pending |
-| TEST-04 | Phase 3 | Pending |
+| TEST-01 | Phase 3 | Complete |
+| TEST-02 | Phase 3 | Complete |
+| TEST-03 | Phase 3 | Complete |
+| TEST-04 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 20 total

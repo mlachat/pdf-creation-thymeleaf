@@ -17,21 +17,21 @@
 
 - [x] **TMPL-01**: Thymeleaf processes HTML templates with text placeholders (names, addresses, dates) via `th:text`
 - [x] **TMPL-02**: QR code generated via ZXing, embedded as base64 PNG data URI in template
-- [ ] **TMPL-03**: Page breaks work correctly for multi-page documents (`page-break-before: always`)
-- [ ] **TMPL-04**: 2-column layout renders correctly in PDF via CSS columns or table-based layout
-- [ ] **TMPL-05**: Conditional content blocks show/hide sections based on data (`th:if`)
-- [ ] **TMPL-06**: Running headers/footers with page numbers via CSS `@page` margin boxes
+- [x] **TMPL-03**: Page breaks work correctly for multi-page documents (`page-break-before: always`)
+- [x] **TMPL-04**: 2-column layout renders correctly in PDF via CSS columns or table-based layout
+- [x] **TMPL-05**: Conditional content blocks show/hide sections based on data (`th:if`)
+- [x] **TMPL-06**: Running headers/footers with page numbers via CSS `@page` margin boxes
 
 ### Demo Templates
 
-- [ ] **DEMO-01**: Template A — 2-page document with QR code, address/name placeholders, page header/footer
-- [ ] **DEMO-02**: Template B — 1-page document with 2-column layout and placeholders
-- [ ] **DEMO-03**: CSS stylesheets for both templates with print-ready `@page` rules (A4 size, margins)
+- [x] **DEMO-01**: Template A — 2-page document with QR code, address/name placeholders, page header/footer
+- [x] **DEMO-02**: Template B — 1-page document with 2-column layout and placeholders
+- [x] **DEMO-03**: CSS stylesheets for both templates with print-ready `@page` rules (A4 size, margins)
 
 ### Source Artifacts
 
-- [ ] **DOCX-01**: Demo .docx file for Template A (2-page letter with QR code placeholder area)
-- [ ] **DOCX-02**: Demo .docx file for Template B (1-page 2-column layout)
+- [x] **DOCX-01**: Demo .docx file for Template A (2-page letter with QR code placeholder area)
+- [x] **DOCX-02**: Demo .docx file for Template B (1-page 2-column layout)
 
 ### Testing
 
@@ -74,15 +74,15 @@
 | SETUP-05 | Phase 1 | Complete |
 | TMPL-01 | Phase 1 | Complete |
 | TMPL-02 | Phase 1 | Complete |
-| TMPL-03 | Phase 2 | Pending |
-| TMPL-04 | Phase 2 | Pending |
-| TMPL-05 | Phase 2 | Pending |
-| TMPL-06 | Phase 2 | Pending |
-| DEMO-01 | Phase 2 | Pending |
-| DEMO-02 | Phase 2 | Pending |
-| DEMO-03 | Phase 2 | Pending |
-| DOCX-01 | Phase 2 | Pending |
-| DOCX-02 | Phase 2 | Pending |
+| TMPL-03 | Phase 2 | Complete |
+| TMPL-04 | Phase 2 | Complete |
+| TMPL-05 | Phase 2 | Complete |
+| TMPL-06 | Phase 2 | Complete |
+| DEMO-01 | Phase 2 | Complete |
+| DEMO-02 | Phase 2 | Complete |
+| DEMO-03 | Phase 2 | Complete |
+| DOCX-01 | Phase 2 | Complete |
+| DOCX-02 | Phase 2 | Complete |
 | TEST-01 | Phase 3 | Pending |
 | TEST-02 | Phase 3 | Pending |
 | TEST-03 | Phase 3 | Pending |

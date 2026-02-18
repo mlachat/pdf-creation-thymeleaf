@@ -109,6 +109,33 @@ String dataUri = QrCodeGenerator.generateDataUri("https://example.com", 300);
 - `size` — pixel dimension (use 300+ for print quality)
 - Output works directly in HTML `<img>` tags, no file I/O needed
 
+## Converting Word Templates to HTML
+
+Before you can use a Word template in this pipeline, you need to convert it to clean HTML once. The recommended online tool is **[WordHTML.com](https://wordhtml.com/)**.
+
+### Why WordHTML.com
+
+- Free, no signup required
+- Drag-and-drop `.docx` upload
+- View and edit the generated HTML source with syntax highlighting (CodeMirror)
+- Cleanup buttons to strip Word cruft (inline styles, empty tags, classes, comments)
+- Download result as `.html`
+- Images embedded as base64 data URIs (works directly with OpenHTMLtoPDF)
+
+### Conversion Workflow
+
+1. **Upload** — drag your `.docx` file onto [wordhtml.com](https://wordhtml.com/)
+2. **Clean** — click the cleanup buttons to remove inline styles, empty tags, and classes
+3. **Switch to HTML tab** — review the source code
+4. **Save** — download as `.html` or copy the source
+5. **Add Thymeleaf** — replace static text with `th:text="${variable}"` attributes
+6. **Extract CSS** — move inline styles to a separate `.css` file with `@page` rules
+7. **Fix XHTML** — self-close void elements (`<br/>`, `<img/>`, `<meta/>`)
+
+### Alternative: Mammoth.js Demo
+
+For the cleanest semantic output (headings, lists, tables — no styling), use the [Mammoth.js browser demo](https://jstool.gitlab.io/demo/mammoth-js-word-docx-preview-and-convert/). It runs entirely client-side (no upload to any server) and produces minimal HTML by mapping Word styles to semantic elements (`Heading 1` → `<h1>`, bold → `<strong>`). The tradeoff is that all visual styling is stripped — you write the CSS from scratch.
+
 ## How to Migrate a Jasper Template
 
 ### Step 1: Create the HTML Template

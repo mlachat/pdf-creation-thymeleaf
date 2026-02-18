@@ -12,7 +12,7 @@ This project proves that customer-provided Word templates can be converted to HT
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation + Pipeline** - Working PDF generation pipeline with Thymeleaf and QR code support
+- [x] **Phase 1: Foundation + Pipeline** - Working PDF generation pipeline with Thymeleaf and QR code support
 - [ ] **Phase 2: Demo Templates** - Both templates with print-ready CSS, page layouts, and source .docx files
 - [ ] **Phase 3: Test Suite** - JUnit tests producing verified PDFs with content assertions
 
@@ -31,8 +31,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Maven project setup, PdfGenerator, QrCodeGenerator, font embedding, CSS constraints
-- [ ] 01-02-PLAN.md — ThymeleafRenderer integration and end-to-end pipeline test
+- [x] 01-01-PLAN.md — Maven project setup, PdfGenerator, QrCodeGenerator, font embedding, CSS constraints
+- [x] 01-02-PLAN.md — ThymeleafRenderer integration and end-to-end pipeline test
 
 ### Phase 2: Demo Templates
 **Goal**: Two complete, print-ready HTML templates with CSS that demonstrate the full range of PDF layout features (multi-page, QR codes, columns, conditional content, headers/footers)
@@ -71,6 +71,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Pipeline | 0/2 | Planned | - |
+| 1. Foundation + Pipeline | 2/2 | Complete | 2026-02-18 |
 | 2. Demo Templates | 0/TBD | Not started | - |
 | 3. Test Suite | 0/TBD | Not started | - |

@@ -7,16 +7,16 @@
 
 ### Project Setup
 
-- [ ] **SETUP-01**: Spring Boot Maven project with latest starter, Java 21, configured for test-only usage (no runnable application)
-- [ ] **SETUP-02**: OpenHTMLtoPDF, Thymeleaf, and ZXing dependencies configured with pinned versions
-- [ ] **SETUP-03**: Unicode-complete font (DejaVuSans or similar) embedded and registered with OpenHTMLtoPDF
-- [ ] **SETUP-04**: Base URI configuration for resolving CSS, images, and fonts from test classpath
-- [ ] **SETUP-05**: CSS constraints documented (CSS 2.1 only — no Flexbox, no Grid)
+- [x] **SETUP-01**: Spring Boot Maven project with latest starter, Java 21, configured for test-only usage (no runnable application)
+- [x] **SETUP-02**: OpenHTMLtoPDF, Thymeleaf, and ZXing dependencies configured with pinned versions
+- [x] **SETUP-03**: Unicode-complete font (DejaVuSans or similar) embedded and registered with OpenHTMLtoPDF
+- [x] **SETUP-04**: Base URI configuration for resolving CSS, images, and fonts from test classpath
+- [x] **SETUP-05**: CSS constraints documented (CSS 2.1 only — no Flexbox, no Grid)
 
 ### Template Rendering
 
-- [ ] **TMPL-01**: Thymeleaf processes HTML templates with text placeholders (names, addresses, dates) via `th:text`
-- [ ] **TMPL-02**: QR code generated via ZXing, embedded as base64 PNG data URI in template
+- [x] **TMPL-01**: Thymeleaf processes HTML templates with text placeholders (names, addresses, dates) via `th:text`
+- [x] **TMPL-02**: QR code generated via ZXing, embedded as base64 PNG data URI in template
 - [ ] **TMPL-03**: Page breaks work correctly for multi-page documents (`page-break-before: always`)
 - [ ] **TMPL-04**: 2-column layout renders correctly in PDF via CSS columns or table-based layout
 - [ ] **TMPL-05**: Conditional content blocks show/hide sections based on data (`th:if`)
@@ -67,13 +67,13 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SETUP-01 | Phase 1 | Pending |
-| SETUP-02 | Phase 1 | Pending |
-| SETUP-03 | Phase 1 | Pending |
-| SETUP-04 | Phase 1 | Pending |
-| SETUP-05 | Phase 1 | Pending |
-| TMPL-01 | Phase 1 | Pending |
-| TMPL-02 | Phase 1 | Pending |
+| SETUP-01 | Phase 1 | Complete |
+| SETUP-02 | Phase 1 | Complete |
+| SETUP-03 | Phase 1 | Complete |
+| SETUP-04 | Phase 1 | Complete |
+| SETUP-05 | Phase 1 | Complete |
+| TMPL-01 | Phase 1 | Complete |
+| TMPL-02 | Phase 1 | Complete |
 | TMPL-03 | Phase 2 | Pending |
 | TMPL-04 | Phase 2 | Pending |
 | TMPL-05 | Phase 2 | Pending |

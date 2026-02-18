@@ -10,27 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-18)
 ## Current Position
 
 Phase: 2 of 3 (Demo Templates)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-02-18 — Phase 1 complete
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-18 — Completed 02-01-PLAN.md
 
-Progress: [███░░░░░░░] 33%
+Progress: [███████░░░] 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 2.5min
-- Total execution time: 0.08 hours
+- Total plans completed: 3
+- Average duration: 2.3min
+- Total execution time: 0.12 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-pipeline | 2/2 | 5min | 2.5min |
+| 02-demo-templates | 1/2 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2min), 01-02 (3min)
+- Last 5 plans: 01-01 (2min), 01-02 (3min), 02-01 (2min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -48,6 +49,8 @@ Recent decisions affecting current work:
 - CSS 2.1 only: no Flexbox, no Grid, table-based layouts required
 - CSS link paths must be relative to base URI root (test-classes), not template file location
 - Standalone ThymeleafRenderer wrapping SpringTemplateEngine (no Spring Boot auto-config needed)
+- @page margin boxes for running headers/footers (may need fallback if OpenHTMLtoPDF doesn't render them)
+- Raw Open XML ZIP for .docx artifacts (no Apache POI dependency needed)
 
 ### Pending Todos
 
@@ -57,9 +60,10 @@ None.
 
 - CSS `column-count` in paged media has MEDIUM confidence -- may need table-based fallback for Template B
 - CSS `@page` margin boxes with `running()` elements have MEDIUM confidence -- running headers/footers may need iteration
+- @page margin boxes not yet runtime-verified with OpenHTMLtoPDF -- Template A header/footer may need CSS fallback
 
 ## Session Continuity
 
-Last session: 2026-02-18T08:43Z
-Stopped at: Completed 01-02-PLAN.md (Phase 1 complete)
+Last session: 2026-02-18T08:57Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None

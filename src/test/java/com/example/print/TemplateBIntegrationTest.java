@@ -1,7 +1,7 @@
 package com.example.print;
 
 import com.example.print.pdf.PdfGenerator;
-import com.example.print.template.ThymeleafRenderer;
+import com.example.print.template.FreemarkerRenderer;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -44,7 +44,7 @@ class TemplateBIntegrationTest {
         model.put("specialOfferText", "Sonderangebot: 15% Rabatt bei Bestellung bis zum 31.03.2026!");
         model.put("footerText", "Alle Preise verstehen sich zzgl. der gesetzlichen Mehrwertsteuer.");
 
-        ThymeleafRenderer renderer = new ThymeleafRenderer();
+        FreemarkerRenderer renderer = new FreemarkerRenderer();
         String renderedHtml = renderer.render("template-b", model);
         String baseUri = getClass().getClassLoader().getResource("").toExternalForm();
 

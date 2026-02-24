@@ -1,8 +1,7 @@
 package com.example.print;
 
 import com.example.print.pdf.PdfGenerator;
-import com.example.print.qr.QrCodeGenerator;
-import com.example.print.template.ThymeleafRenderer;
+import com.example.print.template.FreemarkerRenderer;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -10,10 +9,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,10 +30,19 @@ class PipelineIntegrationTest {
         Files.createDirectories(OUTPUT_DIR);
     }
 
+    private static String loadQrImageAsDataUri() throws IOException {
+        try (InputStream is = PipelineIntegrationTest.class.getClassLoader()
+                .getResourceAsStream("images/qr-sample.png")) {
+            assertNotNull(is, "qr-sample.png must exist on classpath");
+            byte[] bytes = is.readAllBytes();
+            return "data:image/png;base64," + Base64.getEncoder().encodeToString(bytes);
+        }
+    }
+
     @Test
     void testFullPipeline() throws IOException {
-        // 1. Generate QR code
-        String qrDataUri = QrCodeGenerator.generateDataUri("https://example.com/doc/12345", 300);
+        // 1. Load static QR image
+        String qrDataUri = loadQrImageAsDataUri();
         assertNotNull(qrDataUri);
         assertTrue(qrDataUri.startsWith("data:image/png;base64,"));
 
@@ -47,9 +57,9 @@ class PipelineIntegrationTest {
         model.put("qrCodeDataUri", qrDataUri);
 
         // 3. Render template
-        ThymeleafRenderer renderer = new ThymeleafRenderer();
-        String renderedHtml = renderer.render("test-thymeleaf", model);
-        assertFalse(renderedHtml.contains("th:text"), "Rendered HTML must not contain Thymeleaf attributes");
+        FreemarkerRenderer renderer = new FreemarkerRenderer();
+        String renderedHtml = renderer.render("test-freemarker", model);
+        assertFalse(renderedHtml.contains("<#"), "Rendered HTML must not contain FreeMarker directives");
         assertTrue(renderedHtml.contains("Hans Müller"), "Rendered HTML must contain dynamic data");
 
         // 4. Compute base URI (root of test-classes for CSS resolution)
@@ -72,8 +82,8 @@ class PipelineIntegrationTest {
 
     @Test
     void testPdfContainsExpectedText() throws IOException {
-        // Generate the PDF first (same as testFullPipeline)
-        String qrDataUri = QrCodeGenerator.generateDataUri("https://example.com/doc/12345", 300);
+        // Generate the PDF
+        String qrDataUri = loadQrImageAsDataUri();
 
         Map<String, Object> model = new HashMap<>();
         model.put("name", "Hans Müller");
@@ -84,8 +94,8 @@ class PipelineIntegrationTest {
         model.put("message", "Sehr geehrter Herr Müller, dies ist ein automatisch generierter Testbrief.");
         model.put("qrCodeDataUri", qrDataUri);
 
-        ThymeleafRenderer renderer = new ThymeleafRenderer();
-        String renderedHtml = renderer.render("test-thymeleaf", model);
+        FreemarkerRenderer renderer = new FreemarkerRenderer();
+        String renderedHtml = renderer.render("test-freemarker", model);
         String baseUri = getClass().getClassLoader().getResource("").toExternalForm();
 
         PdfGenerator pdfGenerator = new PdfGenerator();

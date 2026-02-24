@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <link rel="stylesheet" href="css/template-a.css"/>
@@ -15,35 +15,37 @@
     </div>
 
     <div class="address-block">
-        <p th:text="${recipientName}">Max Mustermann</p>
-        <p th:text="${recipientStreet}">Musterstrasse 42</p>
-        <p th:text="${recipientCity}">80331 Muenchen</p>
+        <p>${recipientName}</p>
+        <p>${recipientStreet}</p>
+        <p>${recipientCity}</p>
     </div>
 
     <div class="date-line">
-        <p th:text="${date}">18. Februar 2026</p>
+        <p>${date}</p>
     </div>
 
     <div class="subject-line">
-        <p th:text="${subject}">Betreff: Wichtige Mitteilung</p>
+        <p>${subject}</p>
     </div>
 
     <div class="body-text">
-        <p th:text="${bodyText}">Sehr geehrte Damen und Herren, hiermit moechten wir Sie ueber wichtige Aenderungen informieren. Bitte lesen Sie dieses Schreiben aufmerksam durch und bewahren Sie es fuer Ihre Unterlagen auf.</p>
+        <p>${bodyText}</p>
     </div>
 
-    <div th:if="${showNotice}" class="notice-block">
-        <p th:text="${noticeText}">Hinweis: Bitte beachten Sie die beigefuegten Unterlagen.</p>
+    <#if showNotice>
+    <div class="notice-block">
+        <p>${noticeText}</p>
     </div>
+    </#if>
 
     <div class="qr-section">
-        <img th:src="${qrCodeDataUri}" alt="QR Code" style="width: 150px; height: 150px;"/>
+        <img src="${qrCodeDataUri}" alt="QR Code" style="width: 150px; height: 150px;"/>
     </div>
 
     <div class="sender-area">
         <p>Mit freundlichen Gruessen,</p>
         <br/>
-        <p th:text="${senderName}">Dr. Anna Schmidt</p>
+        <p>${senderName}</p>
         <p>Geschaeftsfuehrerin, ACME GmbH</p>
     </div>
 
@@ -53,15 +55,17 @@
         <h2 class="appendix-heading">Anhang / Zusatzinformationen</h2>
 
         <div class="terms-text">
-            <p th:text="${termsText}">Es gelten die Allgemeinen Geschaeftsbedingungen der ACME GmbH in der jeweils gueltigen Fassung. Eine vollstaendige Fassung der AGB kann auf unserer Webseite eingesehen oder schriftlich angefordert werden.</p>
+            <p>${termsText}</p>
         </div>
 
-        <div th:if="${showDisclaimer}" class="disclaimer-block">
-            <p th:text="${disclaimerText}">Haftungsausschluss: Dieses Dokument dient ausschliesslich zu Informationszwecken und stellt keine rechtsverbindliche Zusage dar.</p>
+        <#if showDisclaimer>
+        <div class="disclaimer-block">
+            <p>${disclaimerText}</p>
         </div>
+        </#if>
 
         <div class="contact-info">
-            <p th:text="${contactInfo}">Kontakt: info@acme-gmbh.de | Tel: +49 89 123456-0 | Fax: +49 89 123456-99</p>
+            <p>${contactInfo}</p>
         </div>
 
     </div>

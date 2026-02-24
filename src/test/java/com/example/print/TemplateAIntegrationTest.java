@@ -1,26 +1,20 @@
 package com.example.print;
 
 import com.example.print.pdf.PdfGenerator;
-import com.example.print.qr.QrCodeGenerator;
-import com.example.print.template.ThymeleafRenderer;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.Result;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.qrcode.QRCodeReader;
+import com.example.print.template.FreemarkerRenderer;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,15 +24,23 @@ class TemplateAIntegrationTest {
 
     private static final Path OUTPUT_DIR = Paths.get("target/test-output");
     private static final Path OUTPUT_FILE = OUTPUT_DIR.resolve("template-a.pdf");
-    private static final String QR_URL = "https://acme-gmbh.de/doc/A-2026-001";
 
     @BeforeAll
     static void setUp() throws IOException {
         Files.createDirectories(OUTPUT_DIR);
     }
 
+    private static String loadQrImageAsDataUri() throws IOException {
+        try (InputStream is = TemplateAIntegrationTest.class.getClassLoader()
+                .getResourceAsStream("images/qr-sample.png")) {
+            assertNotNull(is, "qr-sample.png must exist on classpath");
+            byte[] bytes = is.readAllBytes();
+            return "data:image/png;base64," + Base64.getEncoder().encodeToString(bytes);
+        }
+    }
+
     private byte[] generateTemplateAPdf() throws IOException {
-        String qrDataUri = QrCodeGenerator.generateDataUri(QR_URL, 300);
+        String qrDataUri = loadQrImageAsDataUri();
 
         Map<String, Object> model = new HashMap<>();
         model.put("recipientName", "Hans Müller");
@@ -56,7 +58,7 @@ class TemplateAIntegrationTest {
         model.put("disclaimerText", "Haftungsausschluss: Dieses Dokument dient ausschließlich zu Informationszwecken.");
         model.put("contactInfo", "Kontakt: info@acme-gmbh.de | Tel: +49 89 123456-0");
 
-        ThymeleafRenderer renderer = new ThymeleafRenderer();
+        FreemarkerRenderer renderer = new FreemarkerRenderer();
         String renderedHtml = renderer.render("template-a", model);
         String baseUri = getClass().getClassLoader().getResource("").toExternalForm();
 
@@ -88,24 +90,6 @@ class TemplateAIntegrationTest {
             assertTrue(text.contains("Dr. Anna Schmidt"), "PDF must contain 'Dr. Anna Schmidt'");
             assertTrue(text.contains("ACME GmbH"), "PDF must contain 'ACME GmbH'");
             assertTrue(text.contains("Wichtige Mitteilung"), "PDF must contain 'Wichtige Mitteilung'");
-        }
-    }
-
-    @Test
-    void testTemplateAQrCodeScannable() throws Exception {
-        byte[] pdfBytes = generateTemplateAPdf();
-
-        try (PDDocument document = Loader.loadPDF(pdfBytes)) {
-            PDFRenderer pdfRenderer = new PDFRenderer(document);
-            BufferedImage pageImage = pdfRenderer.renderImageWithDPI(0, 150);
-
-            BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(pageImage);
-            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-            QRCodeReader reader = new QRCodeReader();
-            Result result = reader.decode(bitmap);
-
-            assertEquals(QR_URL, result.getText(),
-                    "QR code must decode to the expected URL");
         }
     }
 }

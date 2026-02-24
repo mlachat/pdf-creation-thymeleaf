@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <link rel="stylesheet" href="css/template-b.css"/>
@@ -10,8 +10,8 @@
 
     <!-- Full-width header -->
     <div class="header">
-        <h1 th:text="${title}">Produktinformation</h1>
-        <p class="subtitle" th:text="${subtitle}">Premium Dienstleistungspaket</p>
+        <h1>${title}</h1>
+        <p class="subtitle">${subtitle}</p>
     </div>
 
     <!-- 2-column table layout -->
@@ -23,22 +23,22 @@
 
                 <div class="detail-row">
                     <p class="detail-label">Produktname</p>
-                    <p class="detail-value" th:text="${productName}">Premium Dienstleistungspaket</p>
+                    <p class="detail-value">${productName}</p>
                 </div>
 
                 <div class="detail-row">
                     <p class="detail-label">Beschreibung</p>
-                    <p class="description" th:text="${productDescription}">Unser umfassendes Dienstleistungspaket bietet Ihnen massgeschneiderte Loesungen fuer Ihr Unternehmen. Profitieren Sie von unserer langjaehrigen Erfahrung und unserem Expertenwissen.</p>
+                    <p class="description">${productDescription}</p>
                 </div>
 
                 <div class="detail-row">
                     <p class="detail-label">Preis</p>
-                    <p class="detail-value" th:text="${price}">EUR 2.499,00 zzgl. MwSt.</p>
+                    <p class="detail-value">${price}</p>
                 </div>
 
                 <div class="detail-row">
                     <p class="detail-label">Verfuegbarkeit</p>
-                    <p class="detail-value" th:text="${availability}">Sofort verfuegbar</p>
+                    <p class="detail-value">${availability}</p>
                 </div>
 
             </td>
@@ -48,27 +48,29 @@
 
                 <div class="detail-row">
                     <p class="detail-label">Ansprechpartner</p>
-                    <p class="detail-value" th:text="${contactPerson}">Thomas Mueller</p>
+                    <p class="detail-value">${contactPerson}</p>
                 </div>
 
                 <div class="detail-row">
                     <p class="detail-label">Telefon</p>
-                    <p class="detail-value" th:text="${phone}">+49 89 123456-10</p>
+                    <p class="detail-value">${phone}</p>
                 </div>
 
                 <div class="detail-row">
                     <p class="detail-label">E-Mail</p>
-                    <p class="detail-value" th:text="${email}">vertrieb@acme-gmbh.de</p>
+                    <p class="detail-value">${email}</p>
                 </div>
 
                 <div class="detail-row">
                     <p class="detail-label">Adresse</p>
-                    <p class="detail-value" th:text="${companyAddress}">ACME GmbH, Innovationsweg 10, 80339 Muenchen</p>
+                    <p class="detail-value">${companyAddress}</p>
                 </div>
 
-                <div th:if="${showSpecialOffer}" class="special-offer">
-                    <p th:text="${specialOfferText}">Sonderangebot: 15% Rabatt bei Bestellung bis zum 31.03.2026!</p>
+                <#if showSpecialOffer>
+                <div class="special-offer">
+                    <p>${specialOfferText}</p>
                 </div>
+                </#if>
 
             </td>
         </tr>
@@ -76,7 +78,7 @@
 
     <!-- Full-width footer -->
     <div class="footer">
-        <p class="legal-text" th:text="${footerText}">Alle Preise verstehen sich zzgl. der gesetzlichen Mehrwertsteuer. Dieses Angebot ist freibleibend und unverbindlich. Irrtum und Aenderungen vorbehalten.</p>
+        <p class="legal-text">${footerText}</p>
         <p class="registration">ACME GmbH | Amtsgericht Muenchen HRB 12345 | Geschaeftsfuehrer: Dr. Anna Schmidt</p>
     </div>
 

@@ -2,9 +2,9 @@
 
 A Java library that replaces JasperReports with a simpler pipeline:
 
-**Word template (.docx) → HTML + Thymeleaf → PDF**
+**Word template (.docx) → HTML + FreeMarker → PDF**
 
-The pipeline uses three components: Thymeleaf for template rendering, OpenHTMLtoPDF for PDF generation, and ZXing for QR codes. No Spring context required — all classes are plain POJOs.
+The pipeline uses two components: FreeMarker for template rendering and OpenHTMLtoPDF for PDF generation. All classes are plain POJOs — no Spring context required.
 
 ## Dependencies
 
@@ -21,23 +21,14 @@ The pipeline uses three components: Thymeleaf for template rendering, OpenHTMLto
 
 <dependencies>
     <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>2.3.34</version>
     </dependency>
     <dependency>
         <groupId>io.github.openhtmltopdf</groupId>
         <artifactId>openhtmltopdf-pdfbox</artifactId>
         <version>1.1.37</version>
-    </dependency>
-    <dependency>
-        <groupId>com.google.zxing</groupId>
-        <artifactId>core</artifactId>
-        <version>3.5.4</version>
-    </dependency>
-    <dependency>
-        <groupId>com.google.zxing</groupId>
-        <artifactId>javase</artifactId>
-        <version>3.5.4</version>
     </dependency>
 </dependencies>
 ```
@@ -45,19 +36,20 @@ The pipeline uses three components: Thymeleaf for template rendering, OpenHTMLto
 ## Quick Start
 
 ```java
-// 1. Generate a QR code (optional)
-String qrDataUri = QrCodeGenerator.generateDataUri("https://example.com/doc/123", 300);
-
-// 2. Build your template model
+// 1. Build your template model
 Map<String, Object> model = new HashMap<>();
 model.put("recipientName", "Hans Müller");
 model.put("date", "18. Februar 2026");
-model.put("qrCodeDataUri", qrDataUri);
 model.put("showNotice", true);
 model.put("noticeText", "Bitte beachten Sie die Änderungen.");
 
-// 3. Render HTML via Thymeleaf
-ThymeleafRenderer renderer = new ThymeleafRenderer();
+// 2. For QR codes, load a static image as base64 data URI
+byte[] qrBytes = Files.readAllBytes(Paths.get("images/qr-code.png"));
+String qrDataUri = "data:image/png;base64," + Base64.getEncoder().encodeToString(qrBytes);
+model.put("qrCodeDataUri", qrDataUri);
+
+// 3. Render HTML via FreeMarker
+FreemarkerRenderer renderer = new FreemarkerRenderer();
 String html = renderer.render("template-a", model);
 
 // 4. Generate PDF
@@ -69,20 +61,20 @@ byte[] pdf = pdfGenerator.generatePdf(html, baseUri);
 Files.write(Paths.get("output.pdf"), pdf);
 ```
 
-## The Three Components
+## The Two Components
 
-### `ThymeleafRenderer`
+### `FreemarkerRenderer`
 
-Renders a Thymeleaf template with a variable map into an HTML string.
+Renders a FreeMarker template with a variable map into an HTML string.
 
 ```java
-ThymeleafRenderer renderer = new ThymeleafRenderer();
+FreemarkerRenderer renderer = new FreemarkerRenderer();
 String html = renderer.render("template-name", model);
 ```
 
 - Resolves templates from `classpath:templates/{name}.html`
 - No Spring application context needed
-- Returns fully rendered HTML (no Thymeleaf attributes remain)
+- Returns fully rendered HTML (no FreeMarker directives remain)
 
 ### `PdfGenerator`
 
@@ -97,17 +89,15 @@ byte[] pdf = generator.generatePdf(html, baseUri);
 - `baseUri` — base URI for resolving relative CSS/image paths. Use `getClass().getClassLoader().getResource("").toExternalForm()` to point to your classpath root
 - Bundles DejaVuSans.ttf for full Unicode support (umlauts, special characters)
 
-### `QrCodeGenerator`
+### QR Codes
 
-Generates a QR code as a base64 data URI, ready for `<img src="...">`.
+QR codes are embedded as static PNG images rather than generated at runtime. Load a pre-generated QR code file and pass it as a base64 data URI in the template model:
 
 ```java
-String dataUri = QrCodeGenerator.generateDataUri("https://example.com", 300);
-// Returns: "data:image/png;base64,iVBOR..."
+byte[] qrBytes = Files.readAllBytes(Paths.get("images/qr-code.png"));
+String dataUri = "data:image/png;base64," + Base64.getEncoder().encodeToString(qrBytes);
+model.put("qrCodeDataUri", dataUri);
 ```
-
-- `size` — pixel dimension (use 300+ for print quality)
-- Output works directly in HTML `<img>` tags, no file I/O needed
 
 ## Converting Word Templates to HTML
 
@@ -128,7 +118,7 @@ Before you can use a Word template in this pipeline, you need to convert it to c
 2. **Clean** — click the cleanup buttons to remove inline styles, empty tags, and classes
 3. **Switch to HTML tab** — review the source code
 4. **Save** — download as `.html` or copy the source
-5. **Add Thymeleaf** — replace static text with `th:text="${variable}"` attributes
+5. **Add FreeMarker** — replace static text with `${variable}` expressions and `<#if>` directives
 6. **Extract CSS** — move inline styles to a separate `.css` file with `@page` rules
 7. **Fix XHTML** — self-close void elements (`<br/>`, `<img/>`, `<meta/>`)
 
@@ -140,28 +130,29 @@ For the cleanest semantic output (headings, lists, tables — no styling), use t
 
 ### Step 1: Create the HTML Template
 
-Convert your `.jrxml` layout to an XHTML file with Thymeleaf placeholders:
+Convert your `.jrxml` layout to an XHTML file with FreeMarker placeholders:
 
 ```html
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <link rel="stylesheet" href="css/your-template.css"/>
 </head>
 <body>
-    <h1 th:text="${title}">Default Title</h1>
-    <p th:text="${bodyText}">Default body text</p>
+    <h1>${title}</h1>
+    <p>${bodyText}</p>
 
     <!-- Conditional blocks -->
-    <div th:if="${showWarning}" class="warning">
-        <p th:text="${warningText}">Warning text</p>
+    <#if showWarning>
+    <div class="warning">
+        <p>${warningText}</p>
     </div>
+    </#if>
 
-    <!-- QR code -->
-    <img th:src="${qrCodeDataUri}" alt="QR" style="width: 150px; height: 150px;"/>
+    <!-- QR code (static image as data URI) -->
+    <img src="${qrCodeDataUri}" alt="QR" style="width: 150px; height: 150px;"/>
 
     <!-- Page break for multi-page documents -->
     <div style="page-break-before: always;">
@@ -173,9 +164,8 @@ Convert your `.jrxml` layout to an XHTML file with Thymeleaf placeholders:
 
 **Template rules:**
 - Must be valid XHTML (self-close void elements: `<br/>`, `<img ... />`, `<meta ... />`)
-- Use `th:text` for dynamic text, `th:if` for conditional blocks, `th:src` for dynamic images
+- Use `${variable}` for dynamic text, `<#if condition>` for conditional blocks
 - Place in `src/main/resources/templates/` (or `src/test/resources/templates/` for tests)
-- Default text between tags serves as preview content
 
 ### Step 2: Create the Print CSS
 
@@ -212,16 +202,16 @@ Place CSS files in `src/main/resources/css/` (same classpath root as templates).
 
 | Jasper Concept | Replacement |
 |---|---|
-| `$P{paramName}` | `th:text="${paramName}"` |
-| `$F{fieldName}` | `th:text="${fieldName}"` |
+| `$P{paramName}` | `${paramName}` |
+| `$F{fieldName}` | `${fieldName}` |
 | `<band>` sections | HTML `<div>` elements |
-| Subreports | Include via `th:replace` or inline |
-| Conditional printing (`printWhenExpression`) | `th:if="${condition}"` |
+| Subreports | Include via `<#include>` or inline |
+| Conditional printing (`printWhenExpression`) | `<#if condition>` |
 | Page header/footer | `@page { @top-center { ... } }` |
 | Page break | `page-break-before: always` |
 | Static text | Plain HTML text |
-| Images | `<img>` with `th:src` or inline `src` |
-| Barcodes/QR | `QrCodeGenerator.generateDataUri(...)` |
+| Images | `<img>` with `src="${variable}"` or inline `src` |
+| Barcodes/QR | Static image file as base64 data URI |
 
 ### Step 4: Wire It Up
 
@@ -234,7 +224,7 @@ JasperPrint print = JasperFillManager.fillReport(report, parameters, dataSource)
 byte[] pdf = JasperExportManager.exportReportToPdf(print);
 
 // AFTER (this library)
-ThymeleafRenderer renderer = new ThymeleafRenderer();
+FreemarkerRenderer renderer = new FreemarkerRenderer();
 PdfGenerator pdfGenerator = new PdfGenerator();
 
 Map<String, Object> model = new HashMap<>();
@@ -260,18 +250,18 @@ OpenHTMLtoPDF implements **CSS 2.1**, not a full browser engine.
 
 ```
 src/main/java/com/example/print/
-    pdf/PdfGenerator.java           # HTML → PDF
-    qr/QrCodeGenerator.java         # Text → QR data URI
-    template/ThymeleafRenderer.java # Template + model → HTML
+    pdf/PdfGenerator.java              # HTML → PDF
+    template/FreemarkerRenderer.java   # Template + model → HTML
 
 src/main/resources/
-    fonts/DejaVuSans.ttf            # Bundled Unicode font
+    fonts/DejaVuSans.ttf               # Bundled Unicode font
 
 src/test/resources/
-    templates/template-a.html       # Example: 2-page business letter
-    templates/template-b.html       # Example: 1-page product sheet
-    css/template-a.css              # Print CSS for template A
-    css/template-b.css              # Print CSS for template B
+    templates/template-a.html          # Example: 2-page business letter
+    templates/template-b.html          # Example: 1-page product sheet
+    images/qr-sample.png               # Static QR code image for tests
+    css/template-a.css                  # Print CSS for template A
+    css/template-b.css                  # Print CSS for template B
 ```
 
 ## Included Example Templates

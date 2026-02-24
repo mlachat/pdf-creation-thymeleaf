@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="css/template-a.css"/>
+    <title>Geschaeftsbrief — Template A</title>
+</head>
+<body>
+
+    <!-- Page 1: Letter front -->
+    <div class="company-header">
+        <h1>ACME GmbH</h1>
+        <p>Innovationsweg 10 | 80339 Muenchen | Deutschland</p>
+    </div>
+
+    <div class="address-window">
+        <div class="sender-return-line">${senderLine!""}</div>
+        <div class="recipient-address">
+            <#if recipientCompany??><p>${recipientCompany}</p></#if>
+            <#if recipientDepartment??><p>${recipientDepartment}</p></#if>
+            <#if recipientExtra??><p>${recipientExtra}</p></#if>
+            <p>${recipientName}</p>
+            <p>${recipientStreet}</p>
+            <p>${recipientCity}</p>
+        </div>
+    </div>
+
+    <div class="date-line">
+        <p>${date}</p>
+    </div>
+
+    <div class="subject-line">
+        <p>${subject}</p>
+    </div>
+
+    <div class="body-text">
+        <p>${bodyText}</p>
+    </div>
+
+    <#if showNotice>
+    <div class="notice-block">
+        <p>${noticeText}</p>
+    </div>
+    </#if>
+
+    <div class="qr-section">
+        <img src="${qrCodeDataUri}" alt="QR Code" style="width: 150px; height: 150px;"/>
+    </div>
+
+    <div class="sender-area">
+        <p>Mit freundlichen Gruessen,</p>
+        <br/>
+        <p>${senderName}</p>
+        <p>Geschaeftsfuehrerin, ACME GmbH</p>
+    </div>
+
+    <!-- Page 2: Additional information -->
+    <div class="page-break">
+
+        <h2 class="appendix-heading">Anhang / Zusatzinformationen</h2>
+
+        <div class="terms-text">
+            <p>${termsText}</p>
+        </div>
+
+        <#if showDisclaimer>
+        <div class="disclaimer-block">
+            <p>${disclaimerText}</p>
+        </div>
+        </#if>
+
+        <div class="contact-info">
+            <p>${contactInfo}</p>
+        </div>
+
+    </div>
+
+</body>
+</html>

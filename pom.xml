@@ -12,35 +12,22 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>pdf-creation</artifactId>
+    <artifactId>pdf-creation-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>print</name>
-    <description>PDF generation pipeline for template-based document rendering</description>
+    <packaging>pom</packaging>
+    <name>PDF Creation Parent</name>
+    <description>Multi-module project for PDF generation benchmarking</description>
 
     <properties>
         <java.version>21</java.version>
-        <openhtmltopdf.version>1.1.37</openhtmltopdf.version>
-        <freemarker.version>2.3.34</freemarker.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <version>${freemarker.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.openhtmltopdf</groupId>
-            <artifactId>openhtmltopdf-pdfbox</artifactId>
-            <version>${openhtmltopdf.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>pdf-creation</module>
+        <module>pdf-creation-jasper</module>
+        <module>pdf-creation-itext</module>
+        <module>benchmark</module>
+        <module>pdf-creation-db</module>
+    </modules>
 
 </project>

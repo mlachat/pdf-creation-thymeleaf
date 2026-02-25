@@ -11,8 +11,11 @@ import com.example.print.template.FreemarkerRenderer;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -26,9 +29,11 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +42,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DocumentGenerationTest {
 
+    private static final Logger log = LoggerFactory.getLogger(DocumentGenerationTest.class);
+
     private static final int SEED_COUNT = 10_000;
+    private static final int BATCH_SIZE = 50;
     private static final byte[] PDF_MAGIC_BYTES = "%PDF".getBytes(StandardCharsets.US_ASCII);
 
     @Container
@@ -63,7 +71,7 @@ class DocumentGenerationTest {
         renderer = new FreemarkerRenderer();
         pdfGenerator = new PdfGenerator();
         qrDataUri = loadQrImageAsDataUri();
-        baseUri = getClass().getClassLoader().getResource("").toExternalForm();
+        baseUri = Objects.requireNonNull(getClass().getClassLoader().getResource("")).toExternalForm();
     }
 
     @Test
@@ -93,19 +101,13 @@ class DocumentGenerationTest {
         List<Address> addresses = addressRepository.findAllWithPerson();
         assertThat(addresses).hasSize(SEED_COUNT);
 
-        List<Document> batch = new ArrayList<>(50);
+        List<Document> batch = new ArrayList<>(BATCH_SIZE);
         for (Address address : addresses) {
             byte[] pdfBytes = generatePdf(address.getPerson(), address);
             batch.add(createDocument(address.getPerson(), pdfBytes));
-
-            if (batch.size() >= 50) {
-                documentRepository.saveAll(batch);
-                batch.clear();
-            }
+            flushBatchIfFull(batch);
         }
-        if (!batch.isEmpty()) {
-            documentRepository.saveAll(batch);
-        }
+        flushBatch(batch);
 
         assertThat(documentRepository.count()).isGreaterThanOrEqualTo(SEED_COUNT);
     }
@@ -113,7 +115,7 @@ class DocumentGenerationTest {
     @Test
     void documentHasPersonButNoAddressReference() {
         var fields = Document.class.getDeclaredFields();
-        var fieldNames = java.util.Arrays.stream(fields)
+        var fieldNames = Arrays.stream(fields)
                 .map(java.lang.reflect.Field::getName)
                 .toList();
 
@@ -139,12 +141,13 @@ class DocumentGenerationTest {
     }
 
     @Test
+    @Tag("benchmark")
     @Transactional
     void benchmark10kPdfGeneration() {
         List<Address> addresses = addressRepository.findAllWithPerson();
         assertThat(addresses).hasSize(SEED_COUNT);
 
-        System.out.println("\n=== DB PDF Generation Benchmark: " + SEED_COUNT + " Documents ===\n");
+        log.info("=== DB PDF Generation Benchmark: {} Documents ===", SEED_COUNT);
 
         // Warmup: generate first 100 PDFs without measuring
         int warmupCount = 100;
@@ -152,12 +155,12 @@ class DocumentGenerationTest {
             Address address = addresses.get(i);
             generatePdf(address.getPerson(), address);
         }
-        System.out.println("  Warmup complete (" + warmupCount + " docs)\n");
+        log.info("Warmup complete ({} docs)", warmupCount);
 
         // Timed run: generate all 10k PDFs + save to DB
         long[] perDocNanos = new long[SEED_COUNT];
         long totalPdfBytes = 0;
-        List<Document> batch = new ArrayList<>(50);
+        List<Document> batch = new ArrayList<>(BATCH_SIZE);
 
         long totalStart = System.nanoTime();
 
@@ -171,19 +174,13 @@ class DocumentGenerationTest {
 
             totalPdfBytes += pdfBytes.length;
             batch.add(createDocument(person, pdfBytes));
-
-            if (batch.size() >= 50) {
-                documentRepository.saveAll(batch);
-                batch.clear();
-            }
+            flushBatchIfFull(batch);
 
             if ((i + 1) % 1000 == 0) {
-                System.out.println("  " + (i + 1) + "/" + SEED_COUNT + " done");
+                log.info("{}/{} done", i + 1, SEED_COUNT);
             }
         }
-        if (!batch.isEmpty()) {
-            documentRepository.saveAll(batch);
-        }
+        flushBatch(batch);
 
         long totalNanos = System.nanoTime() - totalStart;
 
@@ -196,35 +193,52 @@ class DocumentGenerationTest {
 
         // Percentiles
         long[] sorted = perDocNanos.clone();
-        java.util.Arrays.sort(sorted);
+        Arrays.sort(sorted);
 
         double totalSec = totalNanos / 1_000_000_000.0;
         double avgMs = (totalNanos / (double) SEED_COUNT) / 1_000_000.0;
         double steadyAvgMs = (steadyStateTotal / (double) steadyCount) / 1_000_000.0;
         double throughput = SEED_COUNT / totalSec;
         double steadyThroughput = steadyCount / (steadyStateTotal / 1_000_000_000.0);
-        double p50 = sorted[(int) (SEED_COUNT * 0.50)] / 1_000_000.0;
-        double p95 = sorted[(int) (SEED_COUNT * 0.95)] / 1_000_000.0;
-        double p99 = sorted[(int) (SEED_COUNT * 0.99)] / 1_000_000.0;
+        double p50 = sorted[SEED_COUNT / 2 - 1] / 1_000_000.0;
+        double p95 = sorted[(int) (SEED_COUNT * 0.95) - 1] / 1_000_000.0;
+        double p99 = sorted[(int) (SEED_COUNT * 0.99) - 1] / 1_000_000.0;
         double totalMB = totalPdfBytes / (1024.0 * 1024.0);
         double avgKB = (totalPdfBytes / (double) SEED_COUNT) / 1024.0;
 
-        String sep = "=".repeat(60);
-        System.out.println("\n" + sep);
-        System.out.println("  DB BENCHMARK RESULTS (" + SEED_COUNT + " documents)");
-        System.out.println(sep);
-        System.out.printf("  %-35s %20s%n", "Total time", String.format("%.1fs", totalSec));
-        System.out.printf("  %-35s %20s%n", "Throughput", String.format("%.0f PDFs/s", throughput));
-        System.out.printf("  %-35s %20s%n", "Avg time per PDF", String.format("%.2fms", avgMs));
-        System.out.printf("  %-35s %20s%n", "Steady-state avg", String.format("%.2fms", steadyAvgMs));
-        System.out.printf("  %-35s %20s%n", "Steady-state throughput", String.format("%.0f PDFs/s", steadyThroughput));
-        System.out.printf("  %-35s %20s%n", "P50 latency", String.format("%.1fms", p50));
-        System.out.printf("  %-35s %20s%n", "P95 latency", String.format("%.1fms", p95));
-        System.out.printf("  %-35s %20s%n", "P99 latency", String.format("%.1fms", p99));
-        System.out.printf("  %-35s %20s%n", "Total output size", String.format("%.0f MB", totalMB));
-        System.out.printf("  %-35s %20s%n", "Avg PDF file size", String.format("%.1f KB", avgKB));
-        System.out.printf("  %-35s %20s%n", "Documents in DB", String.format("%d", documentRepository.count()));
-        System.out.println(sep + "\n");
+        var sep = "=".repeat(60);
+        var report = String.format("""
+
+                %s
+                  DB BENCHMARK RESULTS (%d documents)
+                %s
+                  %-35s %20s
+                  %-35s %20s
+                  %-35s %20s
+                  %-35s %20s
+                  %-35s %20s
+                  %-35s %20s
+                  %-35s %20s
+                  %-35s %20s
+                  %-35s %20s
+                  %-35s %20s
+                  %-35s %20s
+                %s
+                """,
+                sep, SEED_COUNT, sep,
+                "Total time", String.format("%.1fs", totalSec),
+                "Throughput", String.format("%.0f PDFs/s", throughput),
+                "Avg time per PDF", String.format("%.2fms", avgMs),
+                "Steady-state avg", String.format("%.2fms", steadyAvgMs),
+                "Steady-state throughput", String.format("%.0f PDFs/s", steadyThroughput),
+                "P50 latency", String.format("%.1fms", p50),
+                "P95 latency", String.format("%.1fms", p95),
+                "P99 latency", String.format("%.1fms", p99),
+                "Total output size", String.format("%.0f MB", totalMB),
+                "Avg PDF file size", String.format("%.1f KB", avgKB),
+                "Documents in DB", String.format("%d", documentRepository.count()),
+                sep);
+        log.info(report);
     }
 
     private byte[] generatePdf(Person person, Address address) {
@@ -257,6 +271,19 @@ class DocumentGenerationTest {
         doc.setPdfData(pdfBytes);
         doc.setCreatedAt(LocalDateTime.now());
         return doc;
+    }
+
+    private void flushBatchIfFull(List<Document> batch) {
+        if (batch.size() >= BATCH_SIZE) {
+            flushBatch(batch);
+        }
+    }
+
+    private void flushBatch(List<Document> batch) {
+        if (!batch.isEmpty()) {
+            documentRepository.saveAll(batch);
+            batch.clear();
+        }
     }
 
     private String loadQrImageAsDataUri() throws IOException {

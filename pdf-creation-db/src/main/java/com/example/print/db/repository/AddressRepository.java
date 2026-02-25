@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Spring Data repository for {@link Address} entities with eager-fetch support.
+ */
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
     Optional<Address> findByPersonId(Long personId);

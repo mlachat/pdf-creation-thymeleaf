@@ -9,12 +9,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
+/**
+ * Postal address associated with a {@link Person}, used as recipient address in generated PDFs.
+ */
 @Entity
 @Table(name = "address")
 public class Address {
+
+    private static final Logger log = LoggerFactory.getLogger(Address.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

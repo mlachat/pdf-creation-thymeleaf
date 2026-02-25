@@ -6,12 +6,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
+/**
+ * Represents a person whose data is used to generate personalized PDF documents.
+ */
 @Entity
 @Table(name = "person")
 public class Person {
+
+    private static final Logger log = LoggerFactory.getLogger(Person.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

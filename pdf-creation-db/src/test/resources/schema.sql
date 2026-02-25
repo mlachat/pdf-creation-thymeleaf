@@ -19,3 +19,5 @@ CREATE TABLE document (
     pdf_data    BYTEA        NOT NULL,
     created_at  TIMESTAMP    NOT NULL DEFAULT now()
 );
+
+CREATE INDEX idx_document_person_id ON document(person_id);

@@ -9,13 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Stores a generated PDF document as a byte array, linked to the {@link Person} it was created for.
+ */
 @Entity
 @Table(name = "document")
 public class Document {
+
+    private static final Logger log = LoggerFactory.getLogger(Document.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,11 +66,11 @@ public class Document {
     }
 
     public byte[] getPdfData() {
-        return pdfData;
+        return pdfData != null ? pdfData.clone() : null;
     }
 
     public void setPdfData(byte[] pdfData) {
-        this.pdfData = pdfData;
+        this.pdfData = pdfData != null ? pdfData.clone() : null;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -1,37 +1,88 @@
 # print — Template-Based PDF Generation
 
-A Java library that replaces JasperReports with a simpler pipeline:
+A multi-module Java project comparing three PDF generation approaches, with a shared benchmark suite and database integration tests.
 
-**Word template (.docx) → HTML + FreeMarker → PDF**
+**Spring Boot 4.0.2 / Java 21**
 
-The pipeline uses two components: FreeMarker for template rendering and OpenHTMLtoPDF for PDF generation. All classes are plain POJOs — no Spring context required.
+## Modules
 
-## Dependencies
+| Module | Description |
+|---|---|
+| [pdf-creation](pdf-creation/) | Core library: FreeMarker + OpenHTMLtoPDF |
+| [pdf-creation-jasper](pdf-creation-jasper/) | Alternative: JasperReports |
+| [pdf-creation-itext](pdf-creation-itext/) | Alternative: iText pdfHTML |
+| [pdf-creation-db](pdf-creation-db/) | Database integration with PostgreSQL Testcontainers |
+| [benchmark](benchmark/) | 10k-document comparison benchmark across all three engines |
 
-```xml
-<parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>4.0.2</version>
-</parent>
+## Dataflow
 
-<properties>
-    <java.version>21</java.version>
-</properties>
+```mermaid
+flowchart LR
+    Data["Application Data\n(Person, Address)"] --> FM["FreeMarker\nRenderer"]
+    Data --> Jasper["JasperReports\nCompiler"]
+    Data --> iText["iText\npdfHTML"]
 
-<dependencies>
-    <dependency>
-        <groupId>org.freemarker</groupId>
-        <artifactId>freemarker</artifactId>
-        <version>2.3.34</version>
-    </dependency>
-    <dependency>
-        <groupId>io.github.openhtmltopdf</groupId>
-        <artifactId>openhtmltopdf-pdfbox</artifactId>
-        <version>1.1.37</version>
-    </dependency>
-</dependencies>
+    FM --> HTML["XHTML"]
+    HTML --> OHTPDF["OpenHTMLtoPDF"]
+    OHTPDF --> PDF["PDF bytes"]
+
+    Jasper --> PDF2["PDF bytes"]
+
+    HTML --> iTextConv["iText\nHtmlConverter"]
+    iTextConv --> PDF3["PDF bytes"]
+
+    PDF --> DB["PostgreSQL\n(BYTEA)"]
+    PDF --> File["File System"]
+    PDF2 --> File
+    PDF3 --> File
 ```
+
+### Core Pipeline (pdf-creation)
+
+```mermaid
+flowchart LR
+    Model["Map&lt;String,Object&gt;"] --> FR["FreemarkerRenderer\n.render()"]
+    Template[".html Template\n+ .css"] --> FR
+    FR --> XHTML["XHTML String"]
+    XHTML --> PG["PdfGenerator\n.generatePdf()"]
+    Font["DejaVuSans.ttf"] --> PG
+    PG --> PDF["byte[] PDF"]
+```
+
+## Benchmark Results (10,000 Documents)
+
+Measured on Apple Silicon (M-series), Java 25, single-threaded. 100-document warmup excluded from steady-state metrics.
+
+| Metric | FreeMarker+OHTPDF | JasperReports | iText pdfHTML |
+|---|--:|--:|--:|
+| **Total time** | 44.2s | 11.6s | 14.9s |
+| **Throughput** | 226 PDFs/s | 860 PDFs/s | 670 PDFs/s |
+| **Avg time per PDF** | 4.42ms | 1.16ms | 1.49ms |
+| **Warmup (first PDF)** | 290ms | 466ms | 129ms |
+| **Steady-state throughput** | 231 PDFs/s | 922 PDFs/s | 688 PDFs/s |
+| **Peak heap memory** | 52 MB | 60 MB | 63 MB |
+| **Total output size** | 161 MB | 244 MB | 44 MB |
+| **Avg PDF file size** | 16.5 KB | 25.0 KB | 4.5 KB |
+| **P50 latency** | 4.2ms | 1.0ms | 1.4ms |
+| **P95 latency** | 5.6ms | 1.6ms | 1.9ms |
+| **P99 latency** | 7.9ms | 2.9ms | 2.7ms |
+
+### DB Benchmark (FreeMarker+OHTPDF + PostgreSQL)
+
+10,000 PDFs generated from database records and stored back as BYTEA, using Testcontainers PostgreSQL 17.
+
+| Metric | Result |
+|---|--:|
+| **Total time** | 47.3s |
+| **Throughput** | 211 PDFs/s |
+| **Avg time per PDF** | 4.73ms |
+| **Steady-state avg** | 4.07ms |
+| **Steady-state throughput** | 246 PDFs/s |
+| **P50 latency** | 3.9ms |
+| **P95 latency** | 5.5ms |
+| **P99 latency** | 7.0ms |
+| **Total output size** | 152 MB |
+| **Avg PDF file size** | 15.5 KB |
 
 ## Quick Start
 
@@ -249,19 +300,11 @@ OpenHTMLtoPDF implements **CSS 2.1**, not a full browser engine.
 ## Project Structure
 
 ```
-src/main/java/com/example/print/
-    pdf/PdfGenerator.java              # HTML → PDF
-    template/FreemarkerRenderer.java   # Template + model → HTML
-
-src/main/resources/
-    fonts/DejaVuSans.ttf               # Bundled Unicode font
-
-src/test/resources/
-    templates/template-a.html          # Example: 2-page business letter
-    templates/template-b.html          # Example: 1-page product sheet
-    images/qr-sample.png               # Static QR code image for tests
-    css/template-a.css                  # Print CSS for template A
-    css/template-b.css                  # Print CSS for template B
+pdf-creation/                  # Core: FreeMarker + OpenHTMLtoPDF
+pdf-creation-jasper/           # Alternative: JasperReports
+pdf-creation-itext/            # Alternative: iText pdfHTML
+pdf-creation-db/               # PostgreSQL integration (Testcontainers)
+benchmark/                     # 10k comparison benchmark
 ```
 
 ## Included Example Templates

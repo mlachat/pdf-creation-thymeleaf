@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="css/test-freemarker.css"/>
+    <title>${title}</title>
+</head>
+<body>
+    <div class="address-window">
+        <div class="sender-return-line">${senderLine!""}</div>
+        <div class="recipient-address">
+            <p>${name}</p>
+            <p>${street}</p>
+            <p>${city}</p>
+        </div>
+    </div>
+
+    <div class="content-area">
+        <h1>${heading}</h1>
+        <div class="content">
+            <p>${message}</p>
+        </div>
+        <#if qrCodeDataUri??>
+        <div class="qr-section">
+            <img src="${qrCodeDataUri}" alt="QR Code" style="width: 150px; height: 150px;"/>
+        </div>
+        </#if>
+    </div>
+</body>
+</html>

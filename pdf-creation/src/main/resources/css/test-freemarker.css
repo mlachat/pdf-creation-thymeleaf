@@ -1,0 +1,29 @@
+@page { size: A4; margin: 2cm; }
+body { font-family: 'DejaVuSans', sans-serif; font-size: 12pt; }
+h1 { font-size: 18pt; margin-bottom: 1cm; }
+
+/* DIN 5008 Form B address window — page margins are 20mm, so offset: left 0mm, top 7mm */
+.address-window {
+    position: absolute;
+    left: 0mm;
+    top: 7mm;
+    width: 85mm;
+    height: 45mm;
+    overflow: hidden;
+}
+.address-window .sender-return-line {
+    font-size: 7pt;
+    color: #666666;
+    border-bottom: 0.5pt solid #999999;
+    height: 5mm;
+    line-height: 5mm;
+    overflow: hidden;
+}
+.address-window .recipient-address p {
+    margin: 0;
+    line-height: 1.3;
+}
+
+.content-area { margin-top: 55mm; }
+.content { margin-bottom: 1cm; }
+.qr-section { margin-top: 1cm; text-align: center; }

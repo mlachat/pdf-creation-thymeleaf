@@ -1,6 +1,6 @@
 package com.example.print.benchmark;
 
-import com.example.print.itext.ItextPdfGenerator;
+import com.example.print.itext.OpenPdfGenerator;
 import com.example.print.jasper.JasperPdfGenerator;
 import com.example.print.pdf.PdfGenerator;
 import com.example.print.template.FreemarkerRenderer;
@@ -57,11 +57,11 @@ class BenchmarkRunner {
         System.gc();
         Thread.sleep(2000);
 
-        // Run iText pdfHTML benchmark
-        BenchmarkResult itextResult = runItextBenchmark(addresses, qrDataUri);
+        // Run OpenPDF/Flying Saucer benchmark
+        BenchmarkResult openPdfResult = runOpenPdfBenchmark(addresses, qrDataUri);
 
         // Print comparison table
-        printComparisonTable(freemarkerResult, jasperResult, itextResult);
+        printComparisonTable(freemarkerResult, jasperResult, openPdfResult);
     }
 
     private BenchmarkResult runFreemarkerBenchmark(List<Map<String, Object>> addresses, String qrDataUri) {
@@ -181,12 +181,12 @@ class BenchmarkRunner {
         );
     }
 
-    private BenchmarkResult runItextBenchmark(List<Map<String, Object>> addresses, String qrDataUri) {
-        System.out.println("Running iText pdfHTML benchmark...");
+    private BenchmarkResult runOpenPdfBenchmark(List<Map<String, Object>> addresses, String qrDataUri) {
+        System.out.println("Running OpenPDF/Flying Saucer benchmark...");
 
         FreemarkerRenderer renderer = new FreemarkerRenderer();
         String baseUri = getClass().getClassLoader().getResource("").toExternalForm();
-        ItextPdfGenerator itextGen = new ItextPdfGenerator(baseUri);
+        OpenPdfGenerator openPdfGen = new OpenPdfGenerator();
 
         long[] perDocNanos = new long[DOCUMENT_COUNT];
         long totalOutputBytes = 0;
@@ -201,7 +201,7 @@ class BenchmarkRunner {
 
             long docStart = System.nanoTime();
             String html = renderer.render("template-a", model);
-            byte[] pdf = itextGen.generatePdf(html);
+            byte[] pdf = openPdfGen.generatePdf(html, baseUri);
             long docEnd = System.nanoTime();
 
             perDocNanos[i] = docEnd - docStart;
@@ -212,7 +212,7 @@ class BenchmarkRunner {
             }
 
             if ((i + 1) % 1000 == 0) {
-                System.out.println("  iText: " + (i + 1) + "/" + DOCUMENT_COUNT + " done");
+                System.out.println("  OpenPDF: " + (i + 1) + "/" + DOCUMENT_COUNT + " done");
             }
         }
 
@@ -226,10 +226,10 @@ class BenchmarkRunner {
             steadyStateTotal += perDocNanos[i];
         }
 
-        System.out.println("  iText benchmark complete.\n");
+        System.out.println("  OpenPDF benchmark complete.\n");
 
         return new BenchmarkResult(
-                "iText pdfHTML",
+                "OpenPDF+FlyingSaucer",
                 totalEnd - totalStart,
                 warmupTimeNanos,
                 steadyStateTotal,
